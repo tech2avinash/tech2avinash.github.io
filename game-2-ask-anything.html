@@ -10,6 +10,7 @@
     <style>
         body {
             background-color: #eafdf8;
+            margin:0;
         }
 
         .container {
@@ -24,24 +25,23 @@
             -o-background-size: contain;
             background-size: contain;
             height: 82vh;
-            width: 99vw;
+            width: 100vw;
             background-repeat: no-repeat;
             background-position: center center;
         }
 
         .label {
-            font-size: 7rem;
+            font-size: 6vw;
             text-align: center;
-            text-transform: capitalize;
-            letter-spacing: 3rem;
+            letter-spacing: 3vw;
         }
 
         .btn-record {
             position: fixed;
             bottom: 10px;
             right: 10px;
-            width: 100px;
-            height: 100px;
+            width: 75px;
+            height: 75px;
             border-radius: 50px;
             cursor: pointer;
         }
@@ -74,7 +74,7 @@
             var API_KEY = '4451685-60023a6e5a1955e0b5db7381e';
             var URL = "https://pixabay.com/api/?key=" + API_KEY + "&q=" + encodeURIComponent(entity);
             if (entity.toLowerCase().includes("daddy")) {
-                $('.image').css("background-image", `url(assets/daddy.jpg)`);
+                $('.image').css("background-image", `url(assets/daddy.jpeg)`);
             } else if (entity.toLowerCase().includes("darshi") || entity.toLowerCase().includes("brother")) {
                 $('.image').css("background-image", `url(assets/darshi.jpg)`);
             } else if (entity.toLowerCase().includes("mummy") || entity.toLowerCase().includes("mom")) {
@@ -95,20 +95,21 @@
             $('.btn-record').addClass('start');
             recognition.abort();
         };
+        recognition.onend = () => {
+            $('.btn-record').removeClass('stop');
+            $('.btn-record').addClass('start');
+        };
         recognition.onspeechend = () => {
             $('.btn-record').removeClass('stop');
             $('.btn-record').addClass('start');
-            recognition.abort();
         };
         recognition.onnomatch = (event) => {
             $('.btn-record').removeClass('stop');
             $('.btn-record').addClass('start');
-            recognition.abort();
         };
         recognition.onerror = (event) => {
             $('.btn-record').removeClass('stop');
             $('.btn-record').addClass('start');
-            recognition.abort();
         };
         $(document).ready(function () {
             $('.btn-record').click(function () {
