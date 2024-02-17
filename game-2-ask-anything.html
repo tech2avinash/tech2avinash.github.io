@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, user-scalable=no">
+    <title>Ask Anything</title>
+    <style>
+        body {
+            background-color: #eafdf8;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .image {
+            background-image: url(https://pixabay.com/get/g70aace69586e6df2d1804a0eb33b3061ed28180b81b06e77bbba1a69f858d4712f85fd8d8bdc29dd2a13fe5e11c431b34cdb955866f19400f29437ce0494ca06_1280.jpg);
+            -webkit-background-size: contain;
+            -moz-background-size: contain;
+            -o-background-size: contain;
+            background-size: contain;
+            height: 82vh;
+            width: 99vw;
+            background-repeat: no-repeat;
+            background-position: center center;
+        }
+
+        .label {
+            font-size: 7rem;
+            text-align: center;
+            text-transform: capitalize;
+            letter-spacing: 3rem;
+        }
+
+        .btn-record {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            width: 100px;
+            height: 100px;
+            border-radius: 50px;
+            cursor: pointer;
+        }
+
+        .start {
+            background: green;
+        }
+
+        .stop {
+            background: red;
+        }
+    </style>
+    <script>
+        const SpeechRecognition =
+            window.SpeechRecognition || window.webkitSpeechRecognition;
+        const SpeechGrammarList =
+            window.SpeechGrammarList || window.webkitSpeechGrammarList;
+        const SpeechRecognitionEvent =
+            window.SpeechRecognitionEvent || window.webkitSpeechRecognitionEvent;
+        const recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.lang = "en-US";
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+        recognition.onresult = (event) => {
+            const recentKey = Object.keys(event.results).pop();
+            const entity = event.results[recentKey][0].transcript.replace('.', '');
+            $('.label').text(entity.toUpperCase());
+            console.log(entity);
+            var API_KEY = '4451685-60023a6e5a1955e0b5db7381e';
+            var URL = "https://pixabay.com/api/?key=" + API_KEY + "&q=" + encodeURIComponent(entity);
+            if (entity.toLowerCase().includes("daddy")) {
+                $('.image').css("background-image", `url(assets/daddy.jpg)`);
+            } else if (entity.toLowerCase().includes("darshi") || entity.toLowerCase().includes("brother")) {
+                $('.image').css("background-image", `url(assets/darshi.jpg)`);
+            } else if (entity.toLowerCase().includes("mummy") || entity.toLowerCase().includes("mom")) {
+                $('.image').css("background-image", `url(assets/mom.jpg)`);
+            } else if (entity.toLowerCase().includes("rishi") || entity.toLowerCase().includes("big brother")) {
+                $('.image').css("background-image", `url(assets/rishi.jpg)`);
+            } else {
+                $.getJSON(URL, function (data) {
+                    if (parseInt(data.totalHits) > 0) {
+                        const random = Math.floor(Math.random() * data.hits.length);
+                        $('.image').css("background-image", `url(${data.hits[random].largeImageURL})`);
+                    }
+                    else
+                        console.log('No hits');
+                });
+            }
+            $('.btn-record').removeClass('stop');
+            $('.btn-record').addClass('start');
+            recognition.abort();
+        };
+        recognition.onspeechend = () => {
+            $('.btn-record').removeClass('stop');
+            $('.btn-record').addClass('start');
+            recognition.abort();
+        };
+        recognition.onnomatch = (event) => {
+            $('.btn-record').removeClass('stop');
+            $('.btn-record').addClass('start');
+            recognition.abort();
+        };
+        recognition.onerror = (event) => {
+            $('.btn-record').removeClass('stop');
+            $('.btn-record').addClass('start');
+            recognition.abort();
+        };
+        $(document).ready(function () {
+            $('.btn-record').click(function () {
+                if ($(this).hasClass('start')) {
+                    try {
+                        recognition.start();
+                    } catch { }
+                    $(this).removeClass('start');
+                    $(this).addClass('stop');
+                } else {
+                    recognition.abort();
+                    $(this).removeClass('stop');
+                    $(this).addClass('start');
+                }
+            });
+        });
+
+
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="image"></div>
+        <div class="label">
+        </div>
+    </div>
+    <div class="btn-record start"></div>
+</body>
+
+</html>
